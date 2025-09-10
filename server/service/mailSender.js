@@ -42,13 +42,11 @@ export const mailSender = async (email, otp, otp_type) => {
   }
 };
 
-
-
 export const generateOTP = () => {
-    const otp = otpGenerator.generate(6, {
-        upperCaseAlphabets: false,
-        lowerCaseAlphabets: false,
-        specialChars: false,
-    });
-    return otp;
+  const otp = otpGenerator.generate(6, {
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
+    specialChars: false,
+  });
+  return otp;
 };

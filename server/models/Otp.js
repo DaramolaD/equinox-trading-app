@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import { mailSender } from "../service/mailSender";
 
-const OtpSchema = new mongoose.Schema({
+const OTPSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -21,7 +23,7 @@ const OtpSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-OtpSchema.pre("save", async function(next) {
+OTPSchema.pre("save", async function(next) {
     if (this.isNew) {
         const salt = await bcrypt.genSalt(10);
         await sendVerificationEmail(this.email, this.otp, this.otp_type);
@@ -30,20 +32,21 @@ OtpSchema.pre("save", async function(next) {
     next();
 });
 
-OtpSchema.methods.compareOtp = async function(enteredOtp) {
+OTPSchema.methods.compareOTP = async function(enteredOtp) {
     return await bcrypt.compare(enteredOtp, this.otp);
 }
 
 async function sendVerificationEmail(email, otp, otp_type) {
    try {
-    const mailResponse = await mailSender(email, otp, otp_type);
-    return mailResponse;
+    // const mailResponse = await mailSender(email, otp, otp_type);
+    await mailSender(email, otp, otp_type);
+    // return mailResponse;
    } catch (error) {
     console.log(error);
     throw error;
    }
 }
 
-const Otp = mongoose.model("Otp", OtpSchema);
+const OTP = mongoose.model("Otp", OTPSchema);
 
-export default Otp;
+export default OTP;
